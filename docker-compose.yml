@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: tasksDB
+    networks:
+      - apiGO
+  api:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PASSWORD: 1234
+      B_NAME: tasksDB
+      DB_PORT: 5432
+    depends_on:
+      - db
+    networks:
+      - apiGO
+networks:
+  apiGO: 
