@@ -9,11 +9,13 @@ import (
 type TaskRepository interface {
 	CreateTask(task *entities.Task) error
 	GetTasks() ([]entities.Task, error)
+	getTask(id uint) (entities.Task, error)
 	UpdateTask(task *entities.Task) error
 	DeleteTask(id uint) error
 }
 
 // struck type TaskUseCase with a field corresponding to a dependency injection
+// contains a type TaskRespository field
 type TaskUseCase struct {
 	taskRepository TaskRepository
 }
@@ -33,6 +35,10 @@ func (uc *TaskUseCase) CreateTask(task *entities.Task) error {
 // business logic to get a task
 func (uc *TaskUseCase) GetTasks() ([]entities.Task, error) {
 	return uc.taskRepository.GetTasks()
+}
+
+func (uc *TaskUseCase) GetTask(id uint) error {
+	return uc.taskRepository.getTask(id)
 }
 
 // business logic to update a task, uses the struct taskusecase as uc, recives entities as parameter

@@ -25,6 +25,11 @@ func (r *TaskRepository) GetTasks() ([]entities.Task, error) {
 	return tasks, r.db.Find(&tasks).Error
 }
 
+func (r *TaskRepository) GetTask(id uint) (entities.Task, error) {
+	var task entities.Task
+	return task, r.db.Find(&task).Error
+}
+
 func (r *TaskRepository) UpdateTask(task *entities.Task) error {
 	return r.db.Save(task).Error
 }
