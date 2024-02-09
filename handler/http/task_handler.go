@@ -62,16 +62,11 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 	}
 	task, err := h.taskUseCase.GetTask(uint(taskID))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting the values"})
-		return
-	}
-	tasks, err := h.taskUseCase.GetTasks()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving tasks"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Error getting the values"})
 		return
 	}
 
-	c.JSON(http.StatusOK, tasks)
+	c.JSON(http.StatusOK, task)
 }
 
 // función actualizar task

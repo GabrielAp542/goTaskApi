@@ -42,6 +42,7 @@ func main() {
 		// configuración de rutas
 		router := gin.Default()
 		router.GET("/tasks", taskHandler.GetTasks)
+		router.GET("/task/:id", taskHandler.GetTask)
 		router.POST("/tasks", taskHandler.CreateTask)
 		router.PUT("/tasks/:id", taskHandler.UpdateTask)
 		router.DELETE("/tasks/:id", taskHandler.DeleteTask)

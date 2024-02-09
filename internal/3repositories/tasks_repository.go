@@ -27,7 +27,7 @@ func (r *TaskRepository) GetTasks() ([]entities.Task, error) {
 
 func (r *TaskRepository) GetTask(id uint) (entities.Task, error) {
 	var task entities.Task
-	return task, r.db.Find(&task).Error
+	return task, r.db.First(&task, id).Error
 }
 
 func (r *TaskRepository) UpdateTask(task *entities.Task) error {

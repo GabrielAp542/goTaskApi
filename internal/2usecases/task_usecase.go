@@ -9,7 +9,7 @@ import (
 type TaskRepository interface {
 	CreateTask(task *entities.Task) error
 	GetTasks() ([]entities.Task, error)
-	getTask(id uint) (entities.Task, error)
+	GetTask(id uint) (entities.Task, error)
 	UpdateTask(task *entities.Task) error
 	DeleteTask(id uint) error
 }
@@ -37,8 +37,8 @@ func (uc *TaskUseCase) GetTasks() ([]entities.Task, error) {
 	return uc.taskRepository.GetTasks()
 }
 
-func (uc *TaskUseCase) GetTask(id uint) error {
-	return uc.taskRepository.getTask(id)
+func (uc *TaskUseCase) GetTask(id uint) (entities.Task, error) {
+	return uc.taskRepository.GetTask(id)
 }
 
 // business logic to update a task, uses the struct taskusecase as uc, recives entities as parameter
