@@ -49,8 +49,29 @@ func (h *TaskHandler) GetTasks(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving tasks"})
 		return
 	}
+	// Formato de respuesta en JSON:API
+	var responseData []gin.H
+	for _, task := range tasks {
+		responseData = append(responseData, gin.H{
+			"type": "tasks",
+			"id":   task.TaskId,
+			"attributes": gin.H{
+				"title":     task.Task_name,
+				"completed": task.Compleated,
+			},
+			"relationships": gin.H{
+				"relationships": gin.H{
+					"User":      task.Id_User,
+					"completed": task.Compleated,
+				},
+				"User":      task.Id_User,
+				"completed": task.Compleated,
+			},
+		})
+	}
 
-	c.JSON(http.StatusOK, tasks)
+	c.JSON(http.StatusOK, gin.H{"data": responseData})
+	//c.JSON(http.StatusOK, tasks)
 }
 
 func (h *TaskHandler) GetTask(c *gin.Context) {
@@ -65,8 +86,17 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Error getting the values"})
 		return
 	}
-
-	c.JSON(http.StatusOK, task)
+	c.JSON(http.StatusOK, gin.H{
+		"data": gin.H{
+			"type": "tasks",
+			"id":   task.TaskId,
+			"attributes": gin.H{
+				"title":     task.Task_name,
+				"completed": task.Compleated,
+			},
+		},
+	})
+	//c.JSON(http.StatusOK, task)
 }
 
 // función actualizar task
@@ -104,5 +134,5 @@ func (h *TaskHandler) DeleteTask(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusNoContent, gin.H{"result": "Invalid task ID"})
 }

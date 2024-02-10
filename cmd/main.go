@@ -31,7 +31,7 @@ func main() {
 	} else {
 		// Migrar esquemas
 		db.AutoMigrate(&entities.Task{})
-
+		db.AutoMigrate(&entities.Users{})
 		// Dependency Injection
 		//inicialice the taskRepository variable by the function newTaskRepository, giving it
 		//the db parameter from the conection
