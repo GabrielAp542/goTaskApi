@@ -5,7 +5,7 @@ INSERT INTO Users (user_id, username) VALUES
 (3, 'Usuario 3');
 
 -- Insertar datos de ejemplo en la tabla de tareas (tasks)
-INSERT INTO tasks (task_id, user_id, task_name) VALUES
+INSERT INTO Tasks (task_id, user_id, task_name) VALUES
 (1, 1, 'Tarea 1 del Usuario 1'),
 (2, 1, 'Tarea 2 del Usuario 1'),
 (3, 2, 'Tarea 1 del Usuario 2'),

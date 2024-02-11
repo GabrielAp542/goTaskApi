@@ -2,6 +2,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -25,22 +26,57 @@ func NewTaskHandler(taskUseCase usecase.TaskUseCase) *TaskHandler {
 // to process the errors
 func (h *TaskHandler) CreateTask(c *gin.Context) {
 	//entities
-	var task entities.Task
-	//a JSON instance is filled with the struck fiels
-	//if an error is detected, it stops the code
-	if err := c.BindJSON(&task); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var taskRequest struct {
+		Data struct {
+			Type       string `json:"type"`
+			Attributes struct {
+				Task_name string `json:"task_name"`
+				Completed bool   `json:"Completed"`
+			} `json:"attributes"`
+			Relationships struct {
+				User struct {
+					Id_User *int `json:"id"`
+				} `json:"user"`
+			} `json:"relationships"`
+		} `json:"data"`
+	}
+
+	if err := c.ShouldBindJSON(&taskRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON:API request format"})
 		return
+	}
+
+	// Crear una nueva tarea desde los datos proporcionados
+	newTask := &entities.Task{
+		Task_name: taskRequest.Data.Attributes.Task_name,
+		Completed: taskRequest.Data.Attributes.Completed,
 	}
 
 	//calls the database to execute the operation
 	//if an error is detected, the code stops with its respective error
-	if err := h.taskUseCase.CreateTask(&task); err != nil {
+	if err := h.taskUseCase.CreateTask(newTask); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	//confirmation of the success of the operation
-	c.JSON(http.StatusCreated, task)
+	c.JSON(http.StatusCreated, gin.H{
+		"data": gin.H{
+			"type": "tasks",
+			"id":   newTask.TaskId,
+			"attributes": gin.H{
+				"task_name": newTask.Task_name,
+				"completed": newTask.Completed,
+			},
+			"relationships": gin.H{
+				"user": gin.H{
+					"data": gin.H{
+						"type": "user",
+						"id":   newTask.Id_User,
+					},
+				},
+			},
+		},
+	})
 }
 
 func (h *TaskHandler) GetTasks(c *gin.Context) {
@@ -52,25 +88,33 @@ func (h *TaskHandler) GetTasks(c *gin.Context) {
 	// Formato de respuesta en JSON:API
 	var responseData []gin.H
 	for _, task := range tasks {
-		responseData = append(responseData, gin.H{
-			"type": "tasks",
-			"id":   task.TaskId,
-			"attributes": gin.H{
-				"title":     task.Task_name,
-				"completed": task.Compleated,
-			},
-			"relationships": gin.H{
-				"relationships": gin.H{
-					"User":      task.Id_User,
-					"completed": task.Compleated,
+		responseData = append(responseData,
+			gin.H{
+				"type": "tasks",
+				"id":   task.TaskId,
+				"attributes": gin.H{
+					"task_name": task.Task_name,
+					"completed": task.Completed,
 				},
-				"User":      task.Id_User,
-				"completed": task.Compleated,
-			},
-		})
+				"relationships": gin.H{
+					"user": gin.H{
+						"data": gin.H{
+							"type": "user",
+							"id":   task.Id_User,
+						},
+					},
+				},
+				"links": gin.H{
+					"self": fmt.Sprintf("http://localhost:8080/task/%s", strconv.Itoa(task.TaskId)),
+				},
+			})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": responseData})
+	c.JSON(http.StatusOK,
+		gin.H{
+			"links": gin.H{},
+			"data":  responseData,
+		})
 	//c.JSON(http.StatusOK, tasks)
 }
 
@@ -86,16 +130,31 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Error getting the values"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data": gin.H{
-			"type": "tasks",
-			"id":   task.TaskId,
-			"attributes": gin.H{
-				"title":     task.Task_name,
-				"completed": task.Compleated,
+	c.JSON(http.StatusOK,
+		gin.H{
+			"links": gin.H{
+				"self": fmt.Sprintf("http://localhost:8080/task/%s", strconv.Itoa(task.TaskId)),
 			},
-		},
-	})
+			"data": gin.H{
+				"type": "tasks",
+				"id":   task.TaskId,
+				"attributes": gin.H{
+					"task_name": task.Task_name,
+					"completed": task.Completed,
+				},
+				"relationships": gin.H{
+					"user": gin.H{
+						"links": gin.H{
+							"self": fmt.Sprintf("http://localhost:8080/users/%s", strconv.Itoa(task.User.UserId)),
+						},
+						"data": gin.H{
+							"type": "user",
+							"id":   task.Id_User,
+						},
+					},
+				},
+			},
+		})
 	//c.JSON(http.StatusOK, task)
 }
 
