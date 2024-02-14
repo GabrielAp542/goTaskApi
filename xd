@@ -1,0 +1,16 @@
+{
+  "data": {
+    "id": 1,
+    "type": "tasks",
+    "attributes": {
+      "task_name": "Título de la tarasdsadsasad",
+      "completed": true
+    },
+    "relationships": {
+        "user": {
+            "type": "user",
+            "id": null
+        }
+    }
+  }
+}

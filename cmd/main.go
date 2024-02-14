@@ -7,9 +7,9 @@ import (
 
 	"github.com/GabrielAp542/goTask/handler/http"
 
-	entities "github.com/GabrielAp542/goTask/internal/1entities"
-	usecase "github.com/GabrielAp542/goTask/internal/2usecases"
-	repository "github.com/GabrielAp542/goTask/internal/3repositories"
+	entities "github.com/GabrielAp542/goTask/internal/entities"
+	repository "github.com/GabrielAp542/goTask/internal/repositories"
+	usecase "github.com/GabrielAp542/goTask/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -42,9 +42,9 @@ func main() {
 		// configuración de rutas
 		router := gin.Default()
 		router.GET("/tasks", taskHandler.GetTasks)
-		router.GET("/task/:id", taskHandler.GetTask)
+		router.GET("/tasks/:id", taskHandler.GetTask)
 		router.POST("/tasks", taskHandler.CreateTask)
-		router.PUT("/tasks/:id", taskHandler.UpdateTask)
+		router.PATCH("/tasks/:id", taskHandler.UpdateTask)
 		router.DELETE("/tasks/:id", taskHandler.DeleteTask)
 
 		// Iniciar servidor

@@ -2,11 +2,13 @@
 package usecase
 
 import (
-	entities "github.com/GabrielAp542/goTask/internal/1entities"
+	"errors"
+
+	entities "github.com/GabrielAp542/goTask/internal/entities"
 )
 
 // interface with all the methods to be implemented by the use cases
-type TaskRepository interface {
+type TaskInterface interface {
 	CreateTask(task *entities.Task) error
 	GetTasks() ([]entities.Task, error)
 	GetTask(id uint) (entities.Task, error)
@@ -17,18 +19,20 @@ type TaskRepository interface {
 // struck type TaskUseCase with a field corresponding to a dependency injection
 // contains a type TaskRespository field
 type TaskUseCase struct {
-	taskRepository TaskRepository
+	taskRepository TaskInterface
 }
 
 // function that takes the struct as a parameter and returns a pinter of that one
-func NewTaskUseCase(taskRepository TaskRepository) *TaskUseCase {
+func NewTaskUseCase(taskRepository TaskInterface) *TaskUseCase {
 	//returns the value of the repository sent before
 	return &TaskUseCase{taskRepository: taskRepository}
 }
 
 // business logic to create a task
 func (uc *TaskUseCase) CreateTask(task *entities.Task) error {
-
+	if task.Task_name == "" {
+		return errors.New("the name must ve listed")
+	}
 	return uc.taskRepository.CreateTask(task)
 }
 

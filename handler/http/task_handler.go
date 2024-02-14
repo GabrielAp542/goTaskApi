@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"strconv"
 
-	entities "github.com/GabrielAp542/goTask/internal/1entities"
-	usecase "github.com/GabrielAp542/goTask/internal/2usecases"
+	"github.com/GabrielAp542/goTask/handler/formats"
+	"github.com/GabrielAp542/goTask/internal/entities"
+	usecase "github.com/GabrielAp542/goTask/internal/usecases"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,11 +24,11 @@ func NewTaskHandler(taskUseCase usecase.TaskUseCase) *TaskHandler {
 	return &TaskHandler{taskUseCase: taskUseCase}
 }
 
-// function that implements the struck TaskHandler and recives as a parameter a gin.Context
+// function that implements the struck TaskHandler and recives as a parameter as gin.Context
 // to process the errors
 func (h *TaskHandler) CreateTask(c *gin.Context) {
 	//entities
-	var taskRequest struct {
+	/*var taskRequest struct {
 		Data struct {
 			Type       string `json:"type"`
 			Attributes struct {
@@ -39,17 +41,17 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 				} `json:"user"`
 			} `json:"relationships"`
 		} `json:"data"`
-	}
+	}*/
 
-	if err := c.ShouldBindJSON(&taskRequest); err != nil {
+	if err := c.ShouldBindJSON(&formats.CreateFormat); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON:API request format"})
 		return
 	}
 
 	// Crear una nueva tarea desde los datos proporcionados
 	newTask := &entities.Task{
-		Task_name: taskRequest.Data.Attributes.Task_name,
-		Completed: taskRequest.Data.Attributes.Completed,
+		Task_name: formats.CreateFormat.Data.Attributes.Task_name,
+		Completed: formats.CreateFormat.Data.Attributes.Completed,
 	}
 
 	//calls the database to execute the operation
@@ -78,7 +80,6 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 		},
 	})
 }
-
 func (h *TaskHandler) GetTasks(c *gin.Context) {
 	tasks, err := h.taskUseCase.GetTasks()
 	if err != nil {
@@ -105,7 +106,7 @@ func (h *TaskHandler) GetTasks(c *gin.Context) {
 					},
 				},
 				"links": gin.H{
-					"self": fmt.Sprintf("http://localhost:8080/task/%s", strconv.Itoa(task.TaskId)),
+					"self": fmt.Sprintf("http://localhost:8080/tasks/%s", strconv.Itoa(task.TaskId)),
 				},
 			})
 	}
@@ -133,7 +134,7 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 	c.JSON(http.StatusOK,
 		gin.H{
 			"links": gin.H{
-				"self": fmt.Sprintf("http://localhost:8080/task/%s", strconv.Itoa(task.TaskId)),
+				"self": fmt.Sprintf("http://localhost:8080/tasks/%s", strconv.Itoa(task.TaskId)),
 			},
 			"data": gin.H{
 				"type": "tasks",
@@ -155,7 +156,6 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 				},
 			},
 		})
-	//c.JSON(http.StatusOK, task)
 }
 
 // función actualizar task
@@ -166,19 +166,62 @@ func (h *TaskHandler) UpdateTask(c *gin.Context) {
 		return
 	}
 
-	var updatedTask entities.Task
-	if err := c.ShouldBindJSON(&updatedTask); err != nil {
+	var taskModel struct {
+		Data struct {
+			Type       string `json:"type"`
+			Attributes struct {
+				Task_name string `json:"task_name"`
+				Completed bool   `json:"Completed"`
+			} `json:"attributes"`
+			Relationships struct {
+				User struct {
+					Id_User *int `json:"id"`
+				} `json:"user"`
+			} `json:"relationships"`
+		} `json:"data"`
+	}
+
+	if err := c.ShouldBindJSON(&taskModel); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	updatedTask.TaskId = int(taskID)
-	if err := h.taskUseCase.UpdateTask(&updatedTask); err != nil {
+	taskUpdate := entities.Task{
+		Task_name: taskModel.Data.Attributes.Task_name,
+		Completed: taskModel.Data.Attributes.Completed,
+		Id_User:   taskModel.Data.Relationships.User.Id_User,
+	}
+
+	taskUpdate.TaskId = int(taskID)
+	if err := h.taskUseCase.UpdateTask(&taskUpdate); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating task"})
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedTask)
+	c.JSON(http.StatusOK, gin.H{
+		"links": gin.H{
+			"self": fmt.Sprintf("http://localhost:8080/tasks/%s", strconv.Itoa(taskUpdate.TaskId)),
+		},
+		"data": gin.H{
+			"type": "tasks",
+			"id":   taskUpdate.TaskId,
+			"attributes": gin.H{
+				"task_name": taskUpdate.Task_name,
+				"completed": taskUpdate.Completed,
+			},
+			"relationships": gin.H{
+				"user": gin.H{
+					"links": gin.H{
+						"self": fmt.Sprintf("http://localhost:8080/users/%s", strconv.Itoa(taskUpdate.User.UserId)),
+					},
+					"data": gin.H{
+						"type": "user",
+						"id":   taskUpdate.Id_User,
+					},
+				},
+			},
+		},
+	})
 }
 
 func (h *TaskHandler) DeleteTask(c *gin.Context) {

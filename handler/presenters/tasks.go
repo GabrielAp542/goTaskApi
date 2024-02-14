@@ -3,7 +3,7 @@ package presenters
 import (
 	"log"
 
-	entities "github.com/GabrielAp542/goTask/internal/1entities"
+	entities "github.com/GabrielAp542/goTask/internal/entities"
 	"github.com/gin-gonic/gin"
 )
 
