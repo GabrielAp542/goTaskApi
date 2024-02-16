@@ -1,5 +1,5 @@
 // repository/task_repository.go
-package repository
+package repositories
 
 import (
 	entities "github.com/GabrielAp542/goTask/internal/entities"
