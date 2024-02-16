@@ -1,7 +1,7 @@
 package formats
 
 // format for post request
-var CreateFormat struct {
+var JsonFormat struct {
 	Data struct {
 		Type       string `json:"type"`
 		Attributes struct {

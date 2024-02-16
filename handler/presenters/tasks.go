@@ -1,9 +1,7 @@
 package presenters
 
 import (
-	"log"
-
-	entities "github.com/GabrielAp542/goTask/internal/entities"
+	"github.com/GabrielAp542/goTask/internal/entities"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,11 +20,24 @@ type TaskData struct {
 	} `json:"data"`
 }
 
-func DecodeTask(c *gin.Context) {
-	var taskData TaskData
-	var task entities.Task
-	c.BindJSON(&taskData)
-	log.Print(taskData.Data.Attributes.Task_name)
-	task.Task_name = taskData.Data.Attributes.Task_name
-	log.Print(&task.Task_name)
+func FormatResponse(c *gin.Context, task *entities.Task, status int) {
+	//status := http.StatusCreated
+	c.JSON(status, gin.H{
+		"data": gin.H{
+			"type": "tasks",
+			"id":   task.TaskId,
+			"attributes": gin.H{
+				"task_name": task.Task_name,
+				"completed": task.Completed,
+			},
+			"relationships": gin.H{
+				"user": gin.H{
+					"data": gin.H{
+						"type": "user",
+						"id":   task.Id_User,
+					},
+				},
+			},
+		},
+	})
 }

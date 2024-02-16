@@ -49,3 +49,87 @@ func TestCreateTask(t *testing.T) {
 		t.Errorf("error detectado")
 	}
 }
+
+func TestGetTasks(t *testing.T) {
+	db := setupTestDB("172.18.0.2")
+	taskRepo := NewTaskRepository(db)
+	tasks, err := taskRepo.GetTasks()
+	if tasks == nil {
+		t.Errorf("no hay tasks")
+	}
+	if err != nil {
+		t.Errorf("error detectado")
+	}
+	/*
+		dbf := setupTestDB("uwu")
+		taskRepof := NewTaskRepository(dbf)
+		errf := taskRepof.CreateTask(Task)
+		if errf == nil {
+			t.Errorf("error detectado")
+		}*/
+}
+
+func TestGetTask(t *testing.T) {
+	db := setupTestDB("172.18.0.2")
+	taskRepo := NewTaskRepository(db)
+	Task := &entities.Task{
+		TaskId:    1,
+		Task_name: "uwu",
+		Completed: true,
+	}
+	taskRepo.CreateTask(Task)
+	IdTask := 1
+	tasks, err := taskRepo.GetTask(uint(IdTask))
+	if tasks.TaskId != IdTask {
+		t.Errorf("error al obtener los tasks, id_task = %d, recived = %d", IdTask, tasks.TaskId)
+	}
+	if err != nil {
+		t.Errorf("error detectado, %s", err)
+	}
+	/*
+		dbf := setupTestDB("uwu")
+		taskRepof := NewTaskRepository(dbf)
+		errf := taskRepof.CreateTask(Task)
+		if errf == nil {
+			t.Errorf("error detectado")
+		}*/
+}
+
+func TestUpdateTask(t *testing.T) {
+	db := setupTestDB("172.18.0.2")
+	taskRepo := NewTaskRepository(db)
+	TaskCr := &entities.Task{
+		TaskId:    1,
+		Task_name: "uwu",
+		Completed: true,
+	}
+	taskRepo.CreateTask(TaskCr)
+	IdTask := 1
+	Task := &entities.Task{
+		Task_name: "uwu_update",
+		Completed: true,
+		Id_User:   nil,
+		TaskId:    IdTask,
+	}
+	err := taskRepo.UpdateTask(Task)
+	if err != nil {
+		t.Errorf("error al actualzar, %s", err)
+	}
+}
+
+func TestDeleteTask(t *testing.T) {
+	db := setupTestDB("172.18.0.2")
+	taskRepo := NewTaskRepository(db)
+	IdTask := 1
+	err := taskRepo.DeleteTask(uint(IdTask))
+	if err != nil {
+		t.Errorf("error detectado al eliminar")
+	}
+	/*
+		dbf := setupTestDB("uwu")
+		taskRepof := NewTaskRepository(dbf)
+		errf := taskRepof.CreateTask(Task)
+		if errf == nil {
+			t.Errorf("error detectado")
+		}*/
+}

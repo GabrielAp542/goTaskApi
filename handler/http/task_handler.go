@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/GabrielAp542/goTask/handler/formats"
+	"github.com/GabrielAp542/goTask/handler/presenters"
 	"github.com/GabrielAp542/goTask/internal/entities"
 	usecase "github.com/GabrielAp542/goTask/internal/usecases"
 
@@ -27,31 +28,16 @@ func NewTaskHandler(taskUseCase usecase.TaskUseCase) *TaskHandler {
 // function that implements the struck TaskHandler and recives as a parameter as gin.Context
 // to process the errors
 func (h *TaskHandler) CreateTask(c *gin.Context) {
-	//entities
-	/*var taskRequest struct {
-		Data struct {
-			Type       string `json:"type"`
-			Attributes struct {
-				Task_name string `json:"task_name"`
-				Completed bool   `json:"Completed"`
-			} `json:"attributes"`
-			Relationships struct {
-				User struct {
-					Id_User *int `json:"id"`
-				} `json:"user"`
-			} `json:"relationships"`
-		} `json:"data"`
-	}*/
 
-	if err := c.ShouldBindJSON(&formats.CreateFormat); err != nil {
+	if err := c.ShouldBindJSON(&formats.JsonFormat); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON:API request format"})
 		return
 	}
 
 	// Crear una nueva tarea desde los datos proporcionados
 	newTask := &entities.Task{
-		Task_name: formats.CreateFormat.Data.Attributes.Task_name,
-		Completed: formats.CreateFormat.Data.Attributes.Completed,
+		Task_name: formats.JsonFormat.Data.Attributes.Task_name,
+		Completed: formats.JsonFormat.Data.Attributes.Completed,
 	}
 
 	//calls the database to execute the operation
@@ -60,25 +46,10 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	//generating response
+	presenters.FormatResponse(c, newTask, http.StatusCreated)
 	//confirmation of the success of the operation
-	c.JSON(http.StatusCreated, gin.H{
-		"data": gin.H{
-			"type": "tasks",
-			"id":   newTask.TaskId,
-			"attributes": gin.H{
-				"task_name": newTask.Task_name,
-				"completed": newTask.Completed,
-			},
-			"relationships": gin.H{
-				"user": gin.H{
-					"data": gin.H{
-						"type": "user",
-						"id":   newTask.Id_User,
-					},
-				},
-			},
-		},
-	})
 }
 func (h *TaskHandler) GetTasks(c *gin.Context) {
 	tasks, err := h.taskUseCase.GetTasks()
@@ -166,30 +137,15 @@ func (h *TaskHandler) UpdateTask(c *gin.Context) {
 		return
 	}
 
-	var taskModel struct {
-		Data struct {
-			Type       string `json:"type"`
-			Attributes struct {
-				Task_name string `json:"task_name"`
-				Completed bool   `json:"Completed"`
-			} `json:"attributes"`
-			Relationships struct {
-				User struct {
-					Id_User *int `json:"id"`
-				} `json:"user"`
-			} `json:"relationships"`
-		} `json:"data"`
-	}
-
-	if err := c.ShouldBindJSON(&taskModel); err != nil {
+	if err := c.ShouldBindJSON(&formats.JsonFormat); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	taskUpdate := entities.Task{
-		Task_name: taskModel.Data.Attributes.Task_name,
-		Completed: taskModel.Data.Attributes.Completed,
-		Id_User:   taskModel.Data.Relationships.User.Id_User,
+		Task_name: formats.JsonFormat.Data.Attributes.Task_name,
+		Completed: formats.JsonFormat.Data.Attributes.Completed,
+		Id_User:   formats.JsonFormat.Data.Relationships.User.Id_User,
 	}
 
 	taskUpdate.TaskId = int(taskID)

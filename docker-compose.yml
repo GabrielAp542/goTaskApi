@@ -3,6 +3,7 @@ version: '3.8'
 services:
   test_db:
     image: postgres:latest
+    container_name: test_database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
@@ -11,6 +12,7 @@ services:
       - apiGO
   db:
     image: postgres:latest
+    container_name: database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
@@ -18,6 +20,7 @@ services:
     networks:
       - apiGO
   api:
+    container_name: api
     build:
       context: .
     ports:
