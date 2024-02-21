@@ -10,7 +10,7 @@ import (
 
 // estruct to decode post
 
-func FormatResponsePost(task entities.Task) gin.H {
+func FormatResponse(task entities.Task) gin.H {
 	//status := http.StatusCreated
 	formated := gin.H{
 		"data": gin.H{
@@ -33,35 +33,6 @@ func FormatResponsePost(task entities.Task) gin.H {
 	return formated
 }
 
-/*
-	func FormatResponseGetandPut(task entities.Task) gin.H {
-		formated := gin.H{
-			"links": gin.H{
-				"self": fmt.Sprintf("http://localhost:8080/tasks/%s", strconv.Itoa(task.TaskId)),
-			},
-			"data": gin.H{
-				"type": "tasks",
-				"id":   task.TaskId,
-				"attributes": gin.H{
-					"task_name": task.Task_name,
-					"completed": task.Completed,
-				},
-				"relationships": gin.H{
-					"user": gin.H{
-						"links": gin.H{
-							"self": fmt.Sprintf("http://localhost:8080/users/%s", strconv.Itoa(*task.Id_User)),
-						},
-						"data": gin.H{
-							"type": "user",
-							"id":   task.Id_User,
-						},
-					},
-				},
-			},
-		}
-		return formated
-	}
-*/
 func FormatResponseGetMultiple(tasks []entities.Task) gin.H {
 	var responseData []gin.H
 	//status := http.StatusCreated

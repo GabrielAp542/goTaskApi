@@ -25,9 +25,13 @@ func FormatRequestPostandPatch(c *gin.Context) (entities.Task, error) {
 
 	newTask := &entities.Task{}
 	err := c.ShouldBindJSON(&TaskData)
+	if err != nil {
+		return *newTask, err
+	}
 	newTask.TaskId = TaskData.Data.TaskId
 	newTask.Task_name = TaskData.Data.Attributes.Task_name
 	newTask.Completed = TaskData.Data.Attributes.Completed
 	newTask.Id_User = TaskData.Data.Relationships.User.Id_User
 	return *newTask, err
+
 }

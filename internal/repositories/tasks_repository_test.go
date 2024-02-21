@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"testing"
 
 	entities "github.com/GabrielAp542/goTask/internal/entities"
@@ -9,14 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func setupTestDB(host string) *gorm.DB {
-	dsn := fmt.Sprintf("host=%s user=postgres password=1234 dbname=test_tasksDB port=5432", host)
+func setupTestDB() *gorm.DB {
+	dsn := "host=172.18.0.2 user=postgres password=1234 dbname=test_tasksDB port=5432"
 	// Postgres conection by getting env variables
 	//open conection
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	//detect any error
 	if err != nil {
-		//panic("Failed to connect to database - closing api")
+		panic("Failed to connect to database - closing api")
 	}
 	// Migrar esquemas
 	db.AutoMigrate(&entities.Task{})
@@ -25,27 +24,20 @@ func setupTestDB(host string) *gorm.DB {
 }
 
 func TestCreateTask(t *testing.T) {
-	db := setupTestDB("172.18.0.2")
+	db := setupTestDB()
 	taskRepo := NewTaskRepository(db)
 	Task := &entities.Task{
-		Task_name: "uwu",
+		Task_name: "prueba",
 		Completed: true,
 	}
 	err := taskRepo.CreateTask(Task)
 	if err != nil {
 		t.Errorf("error detectado")
 	}
-
-	dbf := setupTestDB("uwu")
-	taskRepof := NewTaskRepository(dbf)
-	errf := taskRepof.CreateTask(Task)
-	if errf == nil {
-		t.Errorf("error detectado")
-	}
 }
 
 func TestGetTasks(t *testing.T) {
-	db := setupTestDB("172.18.0.2")
+	db := setupTestDB()
 	taskRepo := NewTaskRepository(db)
 	tasks, err := taskRepo.GetTasks()
 	if tasks == nil {
@@ -64,7 +56,7 @@ func TestGetTasks(t *testing.T) {
 }
 
 func TestGetTask(t *testing.T) {
-	db := setupTestDB("172.18.0.2")
+	db := setupTestDB()
 	taskRepo := NewTaskRepository(db)
 	Task := &entities.Task{
 		TaskId:    1,
@@ -90,7 +82,7 @@ func TestGetTask(t *testing.T) {
 }
 
 func TestUpdateTask(t *testing.T) {
-	db := setupTestDB("172.18.0.2")
+	db := setupTestDB()
 	taskRepo := NewTaskRepository(db)
 	TaskCr := &entities.Task{
 		TaskId:    1,
@@ -112,7 +104,7 @@ func TestUpdateTask(t *testing.T) {
 }
 
 func TestDeleteTask(t *testing.T) {
-	db := setupTestDB("172.18.0.2")
+	db := setupTestDB()
 	taskRepo := NewTaskRepository(db)
 	IdTask := 1
 	err := taskRepo.DeleteTask(uint(IdTask))

@@ -2,7 +2,6 @@
 package http
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -30,7 +29,6 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 
 	fRequestTask, err := tasks_request.FormatRequestPostandPatch(c)
 	if err != nil {
-		log.Fatal(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON:API request format"})
 		return
 	}
@@ -42,7 +40,7 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 	}
 
 	//generating response
-	fResponseTask := tasks_response.FormatResponsePost(fRequestTask)
+	fResponseTask := tasks_response.FormatResponse(fRequestTask)
 	c.JSON(http.StatusCreated, fResponseTask)
 }
 
@@ -69,8 +67,7 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Error getting the values"})
 		return
 	}
-	fResponseTask := tasks_response.FormatResponsePost(task)
-	log.Print(fResponseTask)
+	fResponseTask := tasks_response.FormatResponse(task)
 	c.JSON(http.StatusOK, fResponseTask)
 
 }
@@ -95,7 +92,7 @@ func (h *TaskHandler) UpdateTask(c *gin.Context) {
 		return
 	}
 
-	fResponseTask := tasks_response.FormatResponsePost(fRequestTask)
+	fResponseTask := tasks_response.FormatResponse(fRequestTask)
 	c.JSON(http.StatusOK, fResponseTask)
 }
 
@@ -111,5 +108,4 @@ func (h *TaskHandler) DeleteTask(c *gin.Context) {
 		return
 	}
 
-	//c.JSON(http.StatusNoContent, gin.H{"result": "Invalid task ID"})
 }

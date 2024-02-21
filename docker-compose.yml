@@ -9,7 +9,8 @@ services:
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: test_tasksDB
     networks:
-      - apiGO
+      apiGO:
+        ipv4_address: 172.18.0.2
   db:
     image: postgres:latest
     container_name: database
