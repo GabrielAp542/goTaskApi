@@ -10,14 +10,9 @@ import (
 )
 
 func setupTestDB() *gorm.DB {
+	//**test connection parameters currently by string until dev container works
 	dsn := "host=172.18.0.2 user=postgres password=1234 dbname=test_tasksDB port=5432"
 	// Postgres conection by getting env variables
-	/*sn := fmt.Sprintf("host=%s user=%s  password=%s  dbname=%s  port=%s",
-	os.Getenv("DB_HOST"),
-	os.Getenv("DB_USER"),
-	os.Getenv("DB_PASSWORD"),
-	os.Getenv("TEST_DB_NAME"),
-	os.Getenv("DB_PORT"))*/
 	//open conection
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	//detect any error

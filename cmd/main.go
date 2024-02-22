@@ -2,54 +2,30 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 
-	"github.com/GabrielAp542/goTask/handler/http"
-
-	entities "github.com/GabrielAp542/goTask/internal/entities"
-	repository "github.com/GabrielAp542/goTask/internal/repositories"
-	usecase "github.com/GabrielAp542/goTask/internal/usecases"
-	"github.com/gin-gonic/gin"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/GabrielAp542/goTask/cmd/database"
+	"github.com/GabrielAp542/goTask/cmd/dependencies"
+	"github.com/GabrielAp542/goTask/cmd/routes"
 	// swagger embed files
 )
 
 func main() {
-	// Postgres conection by getting env variables
-	dsn := fmt.Sprintf("host=%s user=%s  password=%s  dbname=%s  port=%s",
-		os.Getenv("DB_HOST"),
+	//database connection
+	db, err := database.Conection(os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_PORT"))
-	//open conection
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	//detect any error
 	if err != nil {
-		panic("Failed to connect to database - closing api")
-	} else {
-		// Migrar esquemas
-		db.AutoMigrate(&entities.Task{})
-		db.AutoMigrate(&entities.Users{})
-		// Dependency Injection
-		//inicialice the taskRepository variable by the function newTaskRepository, giving it
-		//the db parameter from the conection
-		taskRepository := repository.NewTaskRepository(db)
-		taskUseCase := usecase.NewTaskUseCase(taskRepository)
-		taskHandler := http.NewTaskHandler(*taskUseCase)
-
-		// configuración de rutas
-		router := gin.Default()
-		router.GET("/tasks", taskHandler.GetTasks)
-		router.GET("/tasks/:id", taskHandler.GetTask)
-		router.POST("/tasks", taskHandler.CreateTask)
-		router.PATCH("/tasks/:id", taskHandler.UpdateTask)
-		router.DELETE("/tasks/:id", taskHandler.DeleteTask)
-
-		// Iniciar servidor
-		router.Run(":8080")
+		log.Panicf("the database conection has failed, closing api. Error log: %v", err)
 	}
+	// Dependency Injection
+	taskHandler := dependencies.DependenciesInjection(db)
+	// configuración de rutas
+	router := routes.CreateRoutes(taskHandler)
+	// Iniciar servidor
+	router.Run(":8080")
 
 }
