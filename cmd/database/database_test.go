@@ -2,6 +2,8 @@ package database
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDatabaseConnection(t *testing.T) {
@@ -10,16 +12,18 @@ func TestDatabaseConnection(t *testing.T) {
 		"1234",
 		"test_tasksDB",
 		"5432")
-	if err != nil {
+	assert.NoError(t, err)
+	/*if err != nil {
 		t.Errorf("the database conection has failed, closing api. Error log: %v", err)
-	}
+	}*/
 
 	_, errf := Conection("uwu",
 		"postgres",
 		"1234",
 		"test_tasksDB",
 		"5432")
-	if errf == nil {
-		t.Error("The conection was succesfully when I wasn't expected")
-	}
+	assert.Error(t, errf)
+	/*if errf == nil {
+		t.Error("The conection was succesfull when It wasn't expected")
+	}*/
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	entities "github.com/GabrielAp542/goTask/internal/entities"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -31,9 +32,7 @@ func TestCreateTask(t *testing.T) {
 		Completed: true,
 	}
 	err := taskRepo.CreateTask(Task)
-	if err != nil {
-		t.Errorf("error detectado")
-	}
+	assert.NoError(t, err)
 }
 
 func TestGetTasks(t *testing.T) {
