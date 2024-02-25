@@ -23,3 +23,19 @@ func Conection(host string, user string, password string, dbname string, port st
 	db.AutoMigrate(&entities.Users{})
 	return db, err
 }
+
+// creats connection with testing database
+func TestingDB(fail bool) (*gorm.DB, error) {
+	var host string
+	if fail {
+		host = "invalid"
+	} else {
+		host = "172.22.0.2"
+	}
+	db, err := Conection(host,
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	return db, err
+}

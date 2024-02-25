@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 const sampleJSON = `{
@@ -36,14 +37,12 @@ func TestFormatRequestPostandPatch(t *testing.T) {
 
 	task, err := FormatRequestPostandPatch(c)
 
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
+	assert.NoError(t, err)
 
 	// Verify the fields of the returned task
-	if task.Task_name != "testTask" || task.Completed != false || task.Id_User != nil {
-		t.Errorf("task format not correct: %+v", task)
-	}
+	assert.Equal(t, task.Task_name, "testTask")
+	assert.Equal(t, task.Completed, false)
+	assert.NotEqual(t, task.Id_User, nil)
 
 	//------fail test-----------
 	wf := httptest.NewRecorder()
@@ -51,7 +50,12 @@ func TestFormatRequestPostandPatch(t *testing.T) {
 
 	cf.Request = httptest.NewRequest("POST", "/tasks", strings.NewReader(badJSON))
 	_, errf := FormatRequestPostandPatch(c)
-	if errf == nil {
-		t.Errorf("error not recived but expected: %v", errf)
-	}
+	assert.Error(t, errf)
+}
+
+func TestFormatString(t *testing.T) {
+	_, err := FormatString(sampleJSON)
+	assert.NoError(t, err)
+	_, errFail := FormatString("sampleJSON")
+	assert.Error(t, errFail)
 }

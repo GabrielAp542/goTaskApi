@@ -1,6 +1,8 @@
 package tasks_request
 
 import (
+	"encoding/json"
+
 	"github.com/GabrielAp542/goTask/internal/entities"
 	"github.com/gin-gonic/gin"
 )
@@ -33,5 +35,20 @@ func FormatRequestPostandPatch(c *gin.Context) (entities.Task, error) {
 	newTask.Completed = TaskData.Data.Attributes.Completed
 	newTask.Id_User = TaskData.Data.Relationships.User.Id_User
 	return *newTask, err
+
+}
+
+func FormatString(format string) (entities.Task, error) {
+
+	formatedTask := &entities.Task{}
+	err := json.Unmarshal([]byte(format), &TaskData)
+	if err != nil {
+		return *formatedTask, err
+	}
+	formatedTask.TaskId = TaskData.Data.TaskId
+	formatedTask.Task_name = TaskData.Data.Attributes.Task_name
+	formatedTask.Completed = TaskData.Data.Attributes.Completed
+	formatedTask.Id_User = TaskData.Data.Relationships.User.Id_User
+	return *formatedTask, err
 
 }

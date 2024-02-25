@@ -14,8 +14,8 @@ func FormatResponse(task entities.Task) gin.H {
 	//status := http.StatusCreated
 	formated := gin.H{
 		"data": gin.H{
-			"type": "tasks",
-			"id":   task.TaskId,
+			"type":    "tasks",
+			"task_id": task.TaskId,
 			"attributes": gin.H{
 				"task_name": task.Task_name,
 				"completed": task.Completed,

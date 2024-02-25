@@ -6,58 +6,39 @@ import (
 	"github.com/GabrielAp542/goTask/cmd/database"
 	entities "github.com/GabrielAp542/goTask/internal/entities"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func setupTestDB() *gorm.DB {
-	dsn := "host=172.18.0.2 user=postgres password=1234 dbname=test_tasksDB port=5432"
-	// Postgres conection by getting env variables
-	//open conection
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	//detect any error
-	if err != nil {
-		panic("Failed to connect to database - closing api")
-	}
-	// Migrar esquemas
-	db.AutoMigrate(&entities.Task{})
-	db.AutoMigrate(&entities.Users{})
-	return db
+// connection variables
+var db, dbF *gorm.DB
+var errDB, errDBF error
+
+func init() {
+	db, errDB = database.TestingDB(false)
+	dbF, errDBF = database.TestingDB(true)
 }
 
 func TestCreateTask(t *testing.T) {
-	db := setupTestDB()
+	assert.NoError(t, errDB)
 	taskRepo := NewTaskRepository(db)
 	Task := &entities.Task{
 		Task_name: "prueba",
 		Completed: true,
 	}
-	err := taskRepo.CreateTask(Task)
-	assert.NoError(t, err)
+	errR := taskRepo.CreateTask(Task)
+	assert.NoError(t, errR)
 }
 
 func TestGetTasks(t *testing.T) {
-	db := setupTestDB()
+	assert.NoError(t, errDB)
 	taskRepo := NewTaskRepository(db)
-	tasks, err := taskRepo.GetTasks()
-	if tasks == nil {
-		t.Errorf("no hay tasks")
-	}
-	if err != nil {
-		t.Errorf("error detectado")
-	}
-
-	/*
-		dbf := setupTestDB("uwu")
-		taskRepof := NewTaskRepository(dbf)
-		errf := taskRepof.CreateTask(Task)
-		if errf == nil {
-			t.Errorf("error detectado")
-		}*/
+	tasks, errR := taskRepo.GetTasks()
+	assert.NoError(t, errR)
+	assert.NotNil(t, tasks)
 }
 
 func TestGetTask(t *testing.T) {
-	db := setupTestDB()
+	assert.NoError(t, errDB)
 	taskRepo := NewTaskRepository(db)
 	Task := &entities.Task{
 		TaskId:    1,
@@ -66,62 +47,36 @@ func TestGetTask(t *testing.T) {
 	}
 	taskRepo.CreateTask(Task)
 	IdTask := 1
-	tasks, err := taskRepo.GetTask(uint(IdTask))
-	if tasks.TaskId != IdTask {
-		t.Errorf("error al obtener los tasks, id_task = %d, recived = %d", IdTask, tasks.TaskId)
-	}
-	if err != nil {
-		t.Errorf("error detectado, %s", err)
-	}
-	/*
-		dbf := setupTestDB("uwu")
-		taskRepof := NewTaskRepository(dbf)
-		errf := taskRepof.CreateTask(Task)
-		if errf == nil {
-			t.Errorf("error detectado")
-		}*/
+	tasks, errR := taskRepo.GetTask(uint(IdTask))
+	assert.Equal(t, tasks.TaskId, IdTask)
+	assert.NoError(t, errR)
 }
 
 func TestUpdateTask(t *testing.T) {
-	db, errDB := database.Conection("172.18.0.2",
-		"postgres",
-		"1234",
-		"test_tasksDB",
-		"5432")
 	assert.NoError(t, errDB)
 	taskRepo := NewTaskRepository(db)
 	TaskCr := &entities.Task{
 		TaskId:    1,
-		Task_name: "uwu",
+		Task_name: "asd",
 		Completed: true,
 	}
+	//--update succesfull
 	taskRepo.CreateTask(TaskCr)
 	IdTask := 1
 	Task := &entities.Task{
-		Task_name: "uwu_update",
-		Completed: true,
+		Task_name: "asd_update",
+		Completed: false,
 		Id_User:   nil,
 		TaskId:    IdTask,
 	}
-	err := taskRepo.UpdateTask(Task)
-	if err != nil {
-		t.Errorf("error al actualzar, %s", err)
-	}
+	errR := taskRepo.UpdateTask(Task)
+	assert.NoError(t, errR)
 }
 
 func TestDeleteTask(t *testing.T) {
-	db := setupTestDB()
+	assert.NoError(t, errDB)
 	taskRepo := NewTaskRepository(db)
 	IdTask := 1
-	err := taskRepo.DeleteTask(uint(IdTask))
-	if err != nil {
-		t.Errorf("error detectado al eliminar")
-	}
-	/*
-		dbf := setupTestDB("uwu")
-		taskRepof := NewTaskRepository(dbf)
-		errf := taskRepof.CreateTask(Task)
-		if errf == nil {
-			t.Errorf("error detectado")
-		}*/
+	errR := taskRepo.DeleteTask(uint(IdTask))
+	assert.NoError(t, errR)
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GabrielAp542/goTask/internal/entities"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFormatResponse(t *testing.T) {
@@ -45,7 +46,5 @@ func TestFormatResponseGetMultiple(t *testing.T) {
 	}
 
 	formatedOk := FormatResponseGetMultiple(taskOk)
-	if formatedOk == nil {
-		t.Error("formated not returned")
-	}
+	assert.NotNil(t, formatedOk)
 }

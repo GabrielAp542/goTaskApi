@@ -7,7 +7,7 @@ import (
 )
 
 func TestDatabaseConnection(t *testing.T) {
-	_, err := Conection("172.18.0.2",
+	_, err := Conection("172.22.0.2",
 		"postgres",
 		"1234",
 		"test_tasksDB",
@@ -23,4 +23,11 @@ func TestDatabaseConnection(t *testing.T) {
 		"test_tasksDB",
 		"5432")
 	assert.Error(t, errf)
+}
+
+func TestTestingDB(t *testing.T) {
+	_, errFalse := TestingDB(false)
+	assert.NoError(t, errFalse)
+	_, errTrue := TestingDB(true)
+	assert.Error(t, errTrue)
 }

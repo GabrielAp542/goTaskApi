@@ -31,7 +31,8 @@ func (r *TaskRepository) GetTask(id uint) (entities.Task, error) {
 }
 
 func (r *TaskRepository) UpdateTask(task *entities.Task) error {
-	return r.db.Save(task).Error
+	return r.db.Model(&entities.Task{}).Where("task_id = ?", task.TaskId).Updates(task).Error
+	//return r.db.Save(task).Error
 }
 
 func (r *TaskRepository) DeleteTask(id uint) error {
