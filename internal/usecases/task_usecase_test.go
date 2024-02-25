@@ -3,35 +3,23 @@ package usecase
 import (
 	"testing"
 
+	"github.com/GabrielAp542/goTask/cmd/database"
 	entities "github.com/GabrielAp542/goTask/internal/entities"
 	"github.com/GabrielAp542/goTask/internal/repositories"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/stretchr/testify/assert"
 )
-
-func setupTestDB() *gorm.DB {
-	//**test connection parameters currently by string until dev container works
-	dsn := "host=172.18.0.2 user=postgres password=1234 dbname=test_tasksDB port=5432"
-	// Postgres conection by getting env variables
-	//open conection
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	//detect any error
-	if err != nil {
-		panic("Failed to connect to database - closing api")
-	} else {
-		// Migrar esquemas
-		db.AutoMigrate(&entities.Task{})
-		db.AutoMigrate(&entities.Users{})
-	}
-	return db
-}
 
 // MockDB representa una base de datos ficticia
 
 // CreateTask simula la creación de una tarea en la base de datos
 // TestCreateTask testea la función CreateTask
 func TestCreateTasks(t *testing.T) {
-	db := setupTestDB()
+	db, errDB := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
 	taskRepository := repositories.NewTaskRepository(db)
 	taskUseCase := NewTaskUseCase(taskRepository)
 	// Creamos una instancia de MockDB
@@ -58,7 +46,12 @@ func TestCreateTasks(t *testing.T) {
 }
 
 func TestGetTasks(t *testing.T) {
-	db := setupTestDB()
+	db, errDB := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
 	taskRepository := repositories.NewTaskRepository(db)
 	taskUseCase := NewTaskUseCase(taskRepository)
 	// Creamos una instancia de MockDB
@@ -68,6 +61,7 @@ func TestGetTasks(t *testing.T) {
 
 	// Probamos crear una tarea válida
 	tasks, err := taskUseCase.GetTasks()
+	assert.NotNil(t, tasks)
 	if tasks == nil {
 		t.Errorf("No se encontro struct de resultado")
 	}
@@ -78,7 +72,12 @@ func TestGetTasks(t *testing.T) {
 }
 
 func TestGetTask(t *testing.T) {
-	db := setupTestDB()
+	db, errDB := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
 	taskRepository := repositories.NewTaskRepository(db)
 	taskUseCase := NewTaskUseCase(taskRepository)
 	IdTask := 1
@@ -106,7 +105,12 @@ func TestGetTask(t *testing.T) {
 }
 
 func TestUpdateTask(t *testing.T) {
-	db := setupTestDB()
+	db, errDB := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
 	taskRepository := repositories.NewTaskRepository(db)
 	taskUseCase := NewTaskUseCase(taskRepository)
 	IdTask := 1
@@ -132,7 +136,12 @@ func TestUpdateTask(t *testing.T) {
 }
 
 func TestDeleteTask(t *testing.T) {
-	db := setupTestDB()
+	db, errDB := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
 	taskRepository := repositories.NewTaskRepository(db)
 	taskUseCase := NewTaskUseCase(taskRepository)
 	IdTask := 1

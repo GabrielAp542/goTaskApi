@@ -23,7 +23,4 @@ func TestDatabaseConnection(t *testing.T) {
 		"test_tasksDB",
 		"5432")
 	assert.Error(t, errf)
-	/*if errf == nil {
-		t.Error("The conection was succesfull when It wasn't expected")
-	}*/
 }

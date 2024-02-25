@@ -3,6 +3,7 @@ package repositories
 import (
 	"testing"
 
+	"github.com/GabrielAp542/goTask/cmd/database"
 	entities "github.com/GabrielAp542/goTask/internal/entities"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"
@@ -45,6 +46,7 @@ func TestGetTasks(t *testing.T) {
 	if err != nil {
 		t.Errorf("error detectado")
 	}
+
 	/*
 		dbf := setupTestDB("uwu")
 		taskRepof := NewTaskRepository(dbf)
@@ -81,7 +83,12 @@ func TestGetTask(t *testing.T) {
 }
 
 func TestUpdateTask(t *testing.T) {
-	db := setupTestDB()
+	db, errDB := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
 	taskRepo := NewTaskRepository(db)
 	TaskCr := &entities.Task{
 		TaskId:    1,

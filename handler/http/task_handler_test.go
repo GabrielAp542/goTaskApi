@@ -6,31 +6,63 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/GabrielAp542/goTask/internal/entities"
+	"github.com/GabrielAp542/goTask/cmd/database"
 	"github.com/GabrielAp542/goTask/internal/repositories"
 	usecase "github.com/GabrielAp542/goTask/internal/usecases"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/postgres"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
 
-func setupTestDB() *gorm.DB {
-	dsn := "host=172.18.0.2 user=postgres password=1234 dbname=test_tasksDB port=5432"
-	// Postgres conection by getting env variables
-	//open conection
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	//detect any error
-	if err != nil {
-		panic("Failed to connect to database - closing api")
+var requestBody = []byte(`{
+	"data": {
+		"Attributes": {
+			"Task_name": "testTask",
+			"Completed": false
+		},
+		"Relationships": {
+			"User": {
+				"Id_User": null
+			}
+		}
 	}
-	// Migrar esquemas
-	db.AutoMigrate(&entities.Task{})
-	db.AutoMigrate(&entities.Users{})
-	return db
+}`)
+
+var requestBodyWithoutName = []byte(`{
+	"data": {
+		"Attributes": {
+			"Task_name": "testTask",
+			"Completed": false
+		},
+		"Relationships": {
+			"User": {
+				"Id_User": null
+			}
+		}
+	}
+}`)
+
+func setupTestDB() (*gorm.DB, error) {
+	g, err := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	return g, err
+}
+
+func setupTestDBFail() (*gorm.DB, error) {
+	g, err := database.Conection("uwu",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	return g, err
 }
 
 func TestCreateTask(t *testing.T) {
-	db := setupTestDB()
+	db, err := setupTestDB()
+	assert.NoError(t, err)
 	taskRepo := repositories.NewTaskRepository(db)
 	task_usecase := usecase.NewTaskUseCase(taskRepo)
 	TaskHandler := NewTaskHandler(*task_usecase)
@@ -39,25 +71,10 @@ func TestCreateTask(t *testing.T) {
 	router.POST("/tasks", TaskHandler.CreateTask)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	requestBody := []byte(`{
-	        "data": {
-	            "Attributes": {
-	                "Task_name": "testTask",
-	                "Completed": false
-	            },
-	            "Relationships": {
-	                "User": {
-	                    "Id_User": null
-	                }
-	            }
-	        }
-	    }`)
 	req, _ := http.NewRequest("POST", "/tasks", bytes.NewBuffer(requestBody))
 	c.Request = req
 	TaskHandler.CreateTask(c)
-	if w.Code != http.StatusCreated {
-		t.Errorf("expected status %d, got %d", http.StatusCreated, w.Code)
-	}
+	assert.Equal(t, http.StatusCreated, w.Code)
 
 	//error null body
 	requestBodyf := []byte(``)
@@ -66,37 +83,33 @@ func TestCreateTask(t *testing.T) {
 	reqf, _ := http.NewRequest("POST", "/tasks", bytes.NewBuffer(requestBodyf))
 	cf.Request = reqf
 	TaskHandler.CreateTask(cf)
-	if wf.Code != http.StatusBadRequest {
-		t.Errorf("expected status %d, got %d", http.StatusBadRequest, wf.Code)
-	}
-
-	requestBodyNoName := []byte(`{
-		        "data": {
-		            "Attributes": {
-		                "Task_name": "",
-		                "Completed": false
-		            },
-		            "Relationships": {
-		                "User": {
-		                    "Id_User": null
-		                }
-		            }
-		        }
-		    }`)
+	assert.Equal(t, http.StatusBadRequest, wf.Code)
 	//error no name
 	wfNN := httptest.NewRecorder()
 	cfNN, _ := gin.CreateTestContext(wfNN)
-	reqNoName, _ := http.NewRequest("POST", "/tasks", bytes.NewBuffer(requestBodyNoName))
+	reqNoName, _ := http.NewRequest("POST", "/tasks", bytes.NewBuffer(requestBodyWithoutName))
 	cfNN.Request = reqNoName
 	TaskHandler.CreateTask(cfNN)
-	if wfNN.Code != http.StatusInternalServerError {
-		t.Errorf("expected status %d, got %d", http.StatusInternalServerError, wfNN.Code)
-	}
+	assert.Equal(t, http.StatusInternalServerError, wfNN.Code)
 
 }
 
 func TestGetTasks(t *testing.T) {
-	db := setupTestDB()
+
+	//testing fail connection
+	dbf, errf := setupTestDBFail()
+	assert.Error(t, errf)
+	taskRepof := repositories.NewTaskRepository(dbf)
+	task_usecasef := usecase.NewTaskUseCase(taskRepof)
+	TaskHandlerf := NewTaskHandler(*task_usecasef)
+	wf := httptest.NewRecorder()
+	cf, _ := gin.CreateTestContext(wf)
+	TaskHandlerf.GetTasks(cf)
+
+	assert.Equal(t, http.StatusInternalServerError, wf.Code)
+
+	db, err := setupTestDB()
+	assert.NoError(t, err)
 	taskRepo := repositories.NewTaskRepository(db)
 	task_usecase := usecase.NewTaskUseCase(taskRepo)
 	TaskHandler := NewTaskHandler(*task_usecase)
@@ -105,14 +118,18 @@ func TestGetTasks(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 
 	TaskHandler.GetTasks(c)
-	if w.Code != http.StatusOK {
-		t.Errorf("expected status %d, got %d", http.StatusOK, w.Code)
-	}
+	assert.Equal(t, http.StatusOK, w.Code)
+
 }
 
 func TestGetTaskId(t *testing.T) {
 	//dependency injection
-	db := setupTestDB()
+	db, errDB := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
 	taskRepo := repositories.NewTaskRepository(db)
 	task_usecase := usecase.NewTaskUseCase(taskRepo)
 	TaskHandler := NewTaskHandler(*task_usecase)
@@ -167,12 +184,17 @@ func TestGetTaskId(t *testing.T) {
 
 // update task test
 func TestUpdateTask(t *testing.T) {
-	db := setupTestDB()
+	db, err := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, err)
 	taskRepo := repositories.NewTaskRepository(db)
 	task_usecase := usecase.NewTaskUseCase(taskRepo)
 	TaskHandler := NewTaskHandler(*task_usecase)
 
-	router := gin.Default()
+	//router := gin.Default()
 	//create test post
 	updateBody := []byte(`{
         "data": {
@@ -188,15 +210,14 @@ func TestUpdateTask(t *testing.T) {
         }
     }`)
 
-	router.PATCH("/tasks/:id", TaskHandler.UpdateTask)
+	//router.PATCH("/tasks/:id", TaskHandler.UpdateTask)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	req, _ := http.NewRequest("PATCH", "/tasks/1", bytes.NewBuffer(updateBody))
+	req, _ := http.NewRequest("PATCH", "/tasks/", bytes.NewBuffer(updateBody))
+	c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 	c.Request = req
 	TaskHandler.UpdateTask(c)
-	if w.Code != http.StatusOK {
-		t.Errorf("expected status %d, got %d", http.StatusOK, w.Code)
-	}
+	assert.Equal(t, http.StatusOK, w.Code)
 
 	//error null body
 	requestBodyf := []byte(``)
@@ -211,7 +232,12 @@ func TestUpdateTask(t *testing.T) {
 }
 
 func TestDeleteTasks(t *testing.T) {
-	db := setupTestDB()
+	db, err := database.Conection("172.18.0.2",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, err)
 	taskRepo := repositories.NewTaskRepository(db)
 	task_usecase := usecase.NewTaskUseCase(taskRepo)
 	TaskHandler := NewTaskHandler(*task_usecase)
@@ -229,7 +255,19 @@ func TestDeleteTasks(t *testing.T) {
 	cfid, _ := gin.CreateTestContext(wfid)
 	cfid.Params = append(cfid.Params, gin.Param{Key: "id", Value: "null"})
 	TaskHandler.DeleteTask(cfid)
-	if wfid.Code != http.StatusBadRequest {
-		t.Errorf("expected status %d, got %d", http.StatusBadRequest, wfid.Code)
-	}
+	assert.Equal(t, http.StatusBadRequest, wfid.Code)
+
+	//test server error
+	_, errDB := database.Conection("asad",
+		"postgres",
+		"1234",
+		"test_tasksDB",
+		"5432")
+	assert.NoError(t, errDB)
+	wfs := httptest.NewRecorder()
+	cfs, _ := gin.CreateTestContext(wfs)
+	cfs.Params = append(cfs.Params, gin.Param{Key: "id", Value: "1"})
+	TaskHandler.DeleteTask(cfs)
+	assert.Equal(t, http.StatusInternalServerError, wfs.Code)
+
 }
