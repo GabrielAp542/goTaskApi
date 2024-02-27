@@ -30,7 +30,7 @@ func TestingDB(fail bool) (*gorm.DB, error) {
 	if fail {
 		host = "invalid"
 	} else {
-		host = "172.24.0.3"
+		host = "172.26.0.2"
 	}
 	db, err := Conection(host,
 		"postgres",

@@ -11,7 +11,7 @@
 ## Requirements
 - docker-engine or docker desktop at least version 25.0.2
 - docker compose 2.24.5 or above
-- golang 1.21.6 or above
+- golang 1.21.6 or above for develop
 
 ## Tools
 - Visual Studio Code - IDE
@@ -29,6 +29,11 @@ $ docker compose build
 ```bash
 $ docker compose up
 ```
+## Testing
+```bash
+$ go test ./...
+```
+
 ## Documentation
 ### swagger
 [Docs](http://localhost:8080/docs/index.html)
