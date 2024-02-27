@@ -1,10 +1,30 @@
-<h1>Golang API</h1>
-<h2>Requirements</h2>
-<p>Since the API is thought to be executed on a docker enviroment the main requirement is docker-engine at least version 25.0.2</p>
-<h2>Building</h2>
-<p>1. Open terminal and go to the reposotiries's directory</p>
-<p>2. execute the command</p>
+# Golang API
+
+## Dependencies
+
+- [Gin](https://github.com/gin-gonic/gin) - Framework, v1.9.1
+- [GORM](gorm.io/gorm) - Object Relational Mapping, v1.25.6
+- [Testify](github.com/stretchr/testify) - testing toolkit, v1.8.4
+- [swag](github.com/swaggo/swag) - swagger, v1.6.0
+- [gin-swagger](github.com/swaggo/swag) - gin middleware to swagger, v1.16.3
+  
+## Requirements
+- docker-engine or docker desktop at least version 25.0.2
+- docker compose 2.24.5 or above
+- golang 1.21.6 or above
+
+
+## Building
+### docker
+1. Open terminal and go to the repositories's directory
+2. Build docker compose
+```bash
+docker compose build
 ```
-docker compose up --build
+2. Start docker compose
+```bash
+docker compose up
 ```
-<p>this command will download the postgres image if is not on your system previously</p>
+## Documentation
+### swagger
+[Docs](http://localhost:8080/docs/index.html)
