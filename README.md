@@ -13,17 +13,21 @@
 - docker compose 2.24.5 or above
 - golang 1.21.6 or above
 
+## Tools
+- Visual Studio Code - IDE
+- Bash - terminal
+- Postman - testing
 
 ## Building
 ### docker
 1. Open terminal and go to the repositories's directory
 2. Build docker compose
 ```bash
-docker compose build
+$ docker compose build
 ```
 2. Start docker compose
 ```bash
-docker compose up
+$ docker compose up
 ```
 ## Documentation
 ### swagger
