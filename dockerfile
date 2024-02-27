@@ -6,7 +6,14 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -o app ./cmd/
+
+RUN go get -u github.com/swaggo/swag/cmd/swag 
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go get -u github.com/swaggo/files
+RUN go get -u github.com/swaggo/gin-swagger
+RUN swag init
+
+RUN go build -o app .
 
 EXPOSE 8080
 

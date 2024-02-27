@@ -8,6 +8,22 @@ import (
 )
 
 // estruct to decode post
+type TaskDataDoc struct {
+	Data struct {
+		TaskId     int `gorm:"primaryKey" json:"task_id"`
+		Attributes struct {
+			Task_name string `json:"task_name"`
+			Completed bool   `json:"completed"`
+		} `json:"attributes"`
+		Relationships struct {
+			User struct {
+				Id_User *int `json:"id"`
+			} `json:"user"`
+		} `json:"relationships"`
+	} `json:"data"`
+}
+
+// estruct to decode post
 var TaskData struct {
 	Data struct {
 		TaskId     int `gorm:"primaryKey" json:"task_id"`
@@ -23,7 +39,11 @@ var TaskData struct {
 	} `json:"data"`
 }
 
-func FormatRequestPostandPatch(c *gin.Context) (entities.Task, error) {
+type ErrorDoc struct {
+	Error string `json:"error"`
+}
+
+func FormatRequestPostandPUT(c *gin.Context) (entities.Task, error) {
 
 	newTask := &entities.Task{}
 	err := c.ShouldBindJSON(&TaskData)

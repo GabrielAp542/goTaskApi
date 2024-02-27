@@ -1,0 +1,12 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Task Api",
+        "title": "Task Api Go",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "http://localhost:8080",
+    "basePath": "/tasks",
+    "paths": {}
+}

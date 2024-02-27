@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"testing"
 
+	// swagger embed files
 	"github.com/GabrielAp542/goTask/cmd/database"
 	tasks_request "github.com/GabrielAp542/goTask/handler/presenters/requests"
 	"github.com/GabrielAp542/goTask/internal/repositories"
@@ -80,6 +81,7 @@ func init() {
 }
 
 // --testing--
+
 func TestCreateTask(t *testing.T) {
 	assert.NoError(t, errDB)
 	taskRepo := repositories.NewTaskRepository(db)
@@ -175,7 +177,6 @@ func TestGetTaskId(t *testing.T) {
 	cfidDB.Request, _ = http.NewRequest("GET", "/tasks/", nil)
 	cfidDB.Params = append(cfidDB.Params, gin.Param{Key: "id", Value: "100"})
 	TaskHandler.GetTask(cfidDB)
-	//log.Print(wfidDB.Body)
 	assert.Equal(t, http.StatusNotFound, wfidDB.Code)
 }
 
@@ -197,7 +198,7 @@ func TestUpdateTask(t *testing.T) {
 	//--test sucessfull
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request, _ = http.NewRequest("PATCH", "/tasks/", bytes.NewBuffer(updateBody))
+	c.Request, _ = http.NewRequest("PUT", "/tasks/", bytes.NewBuffer(updateBody))
 	c.Params = append(c.Params, gin.Param{Key: "id", Value: strconv.Itoa(format.TaskId)})
 	TaskHandler.UpdateTask(c)
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -205,7 +206,7 @@ func TestUpdateTask(t *testing.T) {
 	//error bad id
 	wfid := httptest.NewRecorder()
 	cfid, _ := gin.CreateTestContext(wfid)
-	cfid.Request, _ = http.NewRequest("PATCH", "/tasks/", bytes.NewBuffer(requestBody))
+	cfid.Request, _ = http.NewRequest("PUT", "/tasks/", bytes.NewBuffer(requestBody))
 	cfid.Params = append(cfid.Params, gin.Param{Key: "id", Value: "null"})
 	TaskHandler.UpdateTask(cfid)
 	assert.Equal(t, http.StatusBadRequest, wfid.Code)
@@ -214,7 +215,7 @@ func TestUpdateTask(t *testing.T) {
 	requestBodyf := []byte(``)
 	wfN := httptest.NewRecorder()
 	cfN, _ := gin.CreateTestContext(wfN)
-	cfN.Request, _ = http.NewRequest("PATCH", "/tasks/", bytes.NewBuffer(requestBodyf))
+	cfN.Request, _ = http.NewRequest("PUT", "/tasks/", bytes.NewBuffer(requestBodyf))
 	cfN.Params = append(cfN.Params, gin.Param{Key: "id", Value: strconv.Itoa(format.TaskId)})
 	TaskHandler.UpdateTask(cfN)
 	assert.Equal(t, http.StatusBadRequest, wfN.Code)
@@ -226,7 +227,7 @@ func TestUpdateTask(t *testing.T) {
 	TaskHandlerf := NewTaskHandler(*task_usecasef)
 	wfs := httptest.NewRecorder()
 	cfs, _ := gin.CreateTestContext(wfs)
-	cfs.Request, _ = http.NewRequest("PATCH", "/tasks/", bytes.NewBuffer(updateBody))
+	cfs.Request, _ = http.NewRequest("PUT", "/tasks/", bytes.NewBuffer(updateBody))
 	cfs.Params = append(cfs.Params, gin.Param{Key: "id", Value: strconv.Itoa(format.TaskId)})
 	TaskHandlerf.UpdateTask(cfs)
 	assert.Equal(t, http.StatusInternalServerError, wfs.Code)

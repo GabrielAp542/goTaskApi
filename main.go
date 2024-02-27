@@ -8,9 +8,17 @@ import (
 	"github.com/GabrielAp542/goTask/cmd/database"
 	"github.com/GabrielAp542/goTask/cmd/dependencies"
 	"github.com/GabrielAp542/goTask/cmd/routes"
+	_ "github.com/GabrielAp542/goTask/docs"
+	// gin-swagger middleware
+	// swagger embed files
 	// swagger embed files
 )
 
+// @title Task Api Go
+// @version 1.0
+// @description Task Api
+// @host localhost:8080
+// @basepath /
 func main() {
 	//database connection
 	db, err := database.Conection(os.Getenv("DB_HOST"),

@@ -29,13 +29,13 @@ const badJSON = `{
 	compleated: false
 }`
 
-func TestFormatRequestPostandPatch(t *testing.T) {
+func TestFormatRequestPostandPUT(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 
 	c.Request = httptest.NewRequest("POST", "/tasks", strings.NewReader(sampleJSON))
 
-	task, err := FormatRequestPostandPatch(c)
+	task, err := FormatRequestPostandPUT(c)
 
 	assert.NoError(t, err)
 
@@ -49,7 +49,7 @@ func TestFormatRequestPostandPatch(t *testing.T) {
 	cf, _ := gin.CreateTestContext(wf)
 
 	cf.Request = httptest.NewRequest("POST", "/tasks", strings.NewReader(badJSON))
-	_, errf := FormatRequestPostandPatch(c)
+	_, errf := FormatRequestPostandPUT(c)
 	assert.Error(t, errf)
 }
 
