@@ -1,9 +1,0 @@
-basePath: /tasks
-host: http://localhost:8080
-info:
-  contact: {}
-  description: Task Api
-  title: Task Api Go
-  version: "1.0"
-paths: {}
-swagger: "2.0"
