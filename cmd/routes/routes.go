@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/GabrielAp542/goTask/handler/http"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/handler/http"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

@@ -3,8 +3,8 @@ package repositories
 import (
 	"testing"
 
-	"github.com/GabrielAp542/goTask/cmd/database"
-	entities "github.com/GabrielAp542/goTask/internal/entities"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/database"
+	entities "github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )

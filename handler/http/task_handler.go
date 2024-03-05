@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	tasks_request "github.com/GabrielAp542/goTask/handler/presenters/requests"
-	tasks_response "github.com/GabrielAp542/goTask/handler/presenters/responses"
-	usecase "github.com/GabrielAp542/goTask/internal/usecases"
+	tasks_request "github.com/GabrielAp542/goTask-Api-Gabriel/handler/presenters/requests"
+	tasks_response "github.com/GabrielAp542/goTask-Api-Gabriel/handler/presenters/responses"
+	usecase "github.com/GabrielAp542/goTask-Api-Gabriel/internal/usecases"
 
 	"github.com/gin-gonic/gin"
 )

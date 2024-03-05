@@ -1,0 +1,170 @@
+basePath: /
+definitions:
+  tasks_request.ErrorDoc:
+    properties:
+      error:
+        type: string
+    type: object
+  tasks_request.TaskDataDoc:
+    properties:
+      data:
+        properties:
+          attributes:
+            properties:
+              completed:
+                type: boolean
+              task_name:
+                type: string
+            type: object
+          relationships:
+            properties:
+              user:
+                properties:
+                  id:
+                    type: integer
+                type: object
+            type: object
+          task_id:
+            type: integer
+        type: object
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Task Api
+  title: Task Api Go
+  version: "1.0"
+paths:
+  /tasks:
+    get:
+      description: gets all the tasks from database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task created
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+        "400":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/tasks_request.ErrorDoc'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/tasks_request.ErrorDoc'
+      summary: get all tasks registrated
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Creates a task to database
+      parameters:
+      - description: Task body
+        in: body
+        name: Tasks
+        required: true
+        schema:
+          $ref: '#/definitions/tasks_request.TaskDataDoc'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Task created
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+        "400":
+          description: Invalid JSON:API request format
+          schema:
+            $ref: '#/definitions/tasks_request.ErrorDoc'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/tasks_request.ErrorDoc'
+      summary: Create a task
+      tags:
+      - tasks
+  /tasks/{id}:
+    delete:
+      description: delete an specific task from database
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: deleted task
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+        "400":
+          description: 'Invalid task ID '
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+        "404":
+          description: server Error
+      summary: delete task
+      tags:
+      - tasks
+    put:
+      description: update a specific task from database
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Task body
+        in: body
+        name: Tasks
+        required: true
+        schema:
+          $ref: '#/definitions/tasks_request.TaskDataDoc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: updated task
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+        "400":
+          description: Invalid task ID or Body
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+        "404":
+          description: server Error
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+      summary: update task
+      tags:
+      - tasks
+  /tasksId/{id}:
+    get:
+      description: gets an specific task from database
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid task ID
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+        "404":
+          description: value not fould
+          schema:
+            $ref: '#/definitions/tasks_request.TaskDataDoc'
+      summary: Get task id
+      tags:
+      - tasks
+swagger: "2.0"

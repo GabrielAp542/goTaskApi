@@ -19,6 +19,11 @@
 - Postman - testing
 
 ## Building
+### local dev
+1. go to repo location in your computer and use the following command to download and install all dependencies
+```bash
+$ go mod tidy
+```
 ### docker
 1. Open terminal and go to the repositories's directory
 2. Build docker compose
@@ -30,10 +35,22 @@ $ docker compose build
 $ docker compose up
 ```
 ## Testing
+### unit testing
+- executes all unit testing
 ```bash
 $ go test ./...
 ```
-
+### code coverage
+1. Open terminal and go to the repositories's directory
+2. Execute command to create coverage.out via unit testing
+```bash
+go test -coverprofile=coverage.out ./...
+```
+3. Execute command to generate html file
+```bash
+go tool cover -html=coverage.out -o coverage.html
+```
+4. Open html file on browser to check coverage
 ## Documentation
 ### swagger
 [Docs](http://localhost:8080/docs/index.html)

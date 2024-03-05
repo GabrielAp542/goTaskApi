@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/GabrielAp542/goTask/internal/entities"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
 	"github.com/gin-gonic/gin"
 )
 

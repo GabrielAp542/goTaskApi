@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/GabrielAp542/goTask/internal/entities"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -24,13 +24,17 @@ func Conection(host string, user string, password string, dbname string, port st
 	return db, err
 }
 
+type Config struct {
+	DBHost string `json:"db_host"`
+}
+
 // creats connection with testing database
 func TestingDB(fail bool) (*gorm.DB, error) {
 	var host string
 	if fail {
 		host = "invalid"
 	} else {
-		host = "172.26.0.2"
+		host = "172.19.0.2"
 	}
 	db, err := Conection(host,
 		"postgres",

@@ -9,10 +9,10 @@ import (
 	"testing"
 
 	// swagger embed files
-	"github.com/GabrielAp542/goTask/cmd/database"
-	tasks_request "github.com/GabrielAp542/goTask/handler/presenters/requests"
-	"github.com/GabrielAp542/goTask/internal/repositories"
-	usecase "github.com/GabrielAp542/goTask/internal/usecases"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/database"
+	tasks_request "github.com/GabrielAp542/goTask-Api-Gabriel/handler/presenters/requests"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/internal/repositories"
+	usecase "github.com/GabrielAp542/goTask-Api-Gabriel/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"

@@ -7,7 +7,7 @@ import (
 )
 
 func TestDatabaseConnection(t *testing.T) {
-	_, err := Conection("172.22.0.2",
+	_, err := Conection("172.19.0.2",
 		"postgres",
 		"1234",
 		"test_tasksDB",

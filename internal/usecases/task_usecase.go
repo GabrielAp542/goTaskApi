@@ -4,7 +4,7 @@ package usecase
 import (
 	"errors"
 
-	entities "github.com/GabrielAp542/goTask/internal/entities"
+	entities "github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
 )
 
 // interface with all the methods to be implemented by the use cases

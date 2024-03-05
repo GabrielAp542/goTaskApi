@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/GabrielAp542/goTask/cmd/dependencies"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/dependencies"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )

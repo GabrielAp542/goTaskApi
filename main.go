@@ -5,13 +5,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/GabrielAp542/goTask/cmd/database"
-	"github.com/GabrielAp542/goTask/cmd/dependencies"
-	"github.com/GabrielAp542/goTask/cmd/routes"
-	_ "github.com/GabrielAp542/goTask/docs"
-	// gin-swagger middleware
-	// swagger embed files
-	// swagger embed files
+	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/database"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/dependencies"
+	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/routes"
+	_ "github.com/GabrielAp542/goTask-Api-Gabriel/docs"
 )
 
 // @title Task Api Go
