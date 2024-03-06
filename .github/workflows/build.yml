@@ -13,7 +13,13 @@ jobs:
       PROJECT_ID: taskapi-415921
       GIT_TAG: steps.increment-git-tag.outputs.git-tag
 
+  
     steps:
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.7 
+
     - name: Checkout
       uses: actions/checkout@v2
 
