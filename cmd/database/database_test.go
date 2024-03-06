@@ -17,7 +17,7 @@ func TestDatabaseConnection(t *testing.T) {
 		t.Errorf("the database conection has failed, closing api. Error log: %v", err)
 	}*/
 
-	_, errf := Conection("uwu",
+	_, errf := Conection("uwu6",
 		"postgres",
 		"1234",
 		"test_tasksDB",
