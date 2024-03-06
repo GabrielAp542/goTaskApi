@@ -11,7 +11,7 @@ jobs:
     env:
       IMAGE_NAME: api-tasks
       PROJECT_ID: taskapi-415921
-      GIT_TAG: {{ steps.increment-git-tag.outputs.git-tag }}
+      GIT_TAG: steps.increment-git-tag.outputs.git-tag
 
     steps:
     - name: Checkout
