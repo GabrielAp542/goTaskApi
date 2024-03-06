@@ -17,17 +17,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - uses: google-github-actions/setup-gcloud@v2
+    - uses: google-github-actions/setup-gcloud@v0.6.0
       with:
         service_account_key: ${{secrets.SERVICE_ACCOUNT_KEY}}
         project_id: ${{ env.PROJECT_ID }}
         export_default_credentials: true
-
-    - name: Install gcloud CLI
-      run: |-
-        curl https://sdk.cloud.google.com | bash
-        exec -l $SHELL
-        gcloud init
+        version: '333.0.0'
 
     - name: Build Docker Image
       run: docker build -t $IMAGE_NAME:$GIT_TAG .
