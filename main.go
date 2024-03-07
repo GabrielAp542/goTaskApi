@@ -3,7 +3,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/database"
 	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/dependencies"
@@ -24,10 +23,10 @@ func main() {
 	os.Getenv("DB_NAME"),
 	os.Getenv("DB_PORT"))*/
 	db, err := database.Conection("10.0.1.3",
-		os.Getenv("postgres"),
-		os.Getenv("1234"),
-		os.Getenv("task_apiDB"),
-		os.Getenv("5432"))
+		"postgres",
+		"1234",
+		"task_apiDB",
+		"5432")
 	if err != nil {
 		log.Panicf("the database conection has failed, closing api. Error log: %v", err)
 	}
