@@ -18,11 +18,16 @@ import (
 // @basepath /
 func main() {
 	//database connection
-	db, err := database.Conection(os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"))
+	/*db, err := database.Conection(os.Getenv("DB_HOST"),
+	os.Getenv("DB_USER"),
+	os.Getenv("DB_PASSWORD"),
+	os.Getenv("DB_NAME"),
+	os.Getenv("DB_PORT"))*/
+	db, err := database.Conection("10.0.1.3",
+		os.Getenv("postgres"),
+		os.Getenv("1234"),
+		os.Getenv("task_apiDB"),
+		os.Getenv("5432"))
 	if err != nil {
 		log.Panicf("the database conection has failed, closing api. Error log: %v", err)
 	}
