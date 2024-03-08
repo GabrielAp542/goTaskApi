@@ -35,6 +35,6 @@ func main() {
 	// configuración de rutas
 	router := routes.CreateRoutes(taskHandler)
 	// Iniciar servidor
-	router.Run(":8080")
+	router.Run(":80")
 
 }
