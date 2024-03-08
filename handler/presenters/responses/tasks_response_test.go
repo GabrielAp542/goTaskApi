@@ -3,7 +3,7 @@ package tasks_response
 import (
 	"testing"
 
-	"github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
+	"github.com/GabrielAp542/goTaskApi/internal/entities"
 	"github.com/stretchr/testify/assert"
 )
 

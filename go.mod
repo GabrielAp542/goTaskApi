@@ -1,4 +1,4 @@
-module github.com/GabrielAp542/goTask-Api-Gabriel
+module github.com/GabrielAp542/goTaskApi
 
 go 1.21.6
 

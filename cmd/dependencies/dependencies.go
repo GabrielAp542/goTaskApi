@@ -1,9 +1,9 @@
 package dependencies
 
 import (
-	"github.com/GabrielAp542/goTask-Api-Gabriel/handler/http"
-	"github.com/GabrielAp542/goTask-Api-Gabriel/internal/repositories"
-	usecase "github.com/GabrielAp542/goTask-Api-Gabriel/internal/usecases"
+	"github.com/GabrielAp542/goTaskApi/handler/http"
+	"github.com/GabrielAp542/goTaskApi/internal/repositories"
+	usecase "github.com/GabrielAp542/goTaskApi/internal/usecases"
 	"gorm.io/gorm"
 )
 

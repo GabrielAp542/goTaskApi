@@ -2,7 +2,7 @@
 package repositories
 
 import (
-	entities "github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
+	entities "github.com/GabrielAp542/goTaskApi/internal/entities"
 	"gorm.io/gorm"
 )
 

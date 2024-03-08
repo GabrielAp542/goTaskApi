@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
+	"github.com/GabrielAp542/goTaskApi/internal/entities"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

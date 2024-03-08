@@ -3,7 +3,7 @@ package tasks_request
 import (
 	"encoding/json"
 
-	"github.com/GabrielAp542/goTask-Api-Gabriel/internal/entities"
+	"github.com/GabrielAp542/goTaskApi/internal/entities"
 	"github.com/gin-gonic/gin"
 )
 

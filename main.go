@@ -4,10 +4,10 @@ package main
 import (
 	"log"
 
-	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/database"
-	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/dependencies"
-	"github.com/GabrielAp542/goTask-Api-Gabriel/cmd/routes"
-	_ "github.com/GabrielAp542/goTask-Api-Gabriel/docs"
+	"github.com/GabrielAp542/goTaskApi/cmd/database"
+	"github.com/GabrielAp542/goTaskApi/cmd/dependencies"
+	"github.com/GabrielAp542/goTaskApi/cmd/routes"
+	_ "github.com/GabrielAp542/goTaskApi/docs"
 )
 
 // @title Task Api Go
