@@ -11,7 +11,7 @@ jobs:
     env:
       IMAGE_NAME: api-tasks
       PROJECT_ID: taskapi-415921
-      GIT_TAG: aaaa
+      GIT_TAG: latest
 
   
     steps:
