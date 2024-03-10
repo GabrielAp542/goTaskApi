@@ -3,9 +3,9 @@ package usecase
 import (
 	"testing"
 
-	"github.com/GabrielAp542/goTaskApi/cmd/database"
 	entities "github.com/GabrielAp542/goTaskApi/internal/entities"
 	"github.com/GabrielAp542/goTaskApi/internal/repositories"
+	"github.com/GabrielAp542/goTaskApi/setup/database"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
