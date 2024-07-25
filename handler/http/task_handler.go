@@ -2,12 +2,17 @@
 package http
 
 import (
+	"context"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
+	mappermissions "github.com/GabrielAp542/goTaskApi/handler/map_permissions"
 	tasks_request "github.com/GabrielAp542/goTaskApi/handler/presenters/requests"
 	tasks_response "github.com/GabrielAp542/goTaskApi/handler/presenters/responses"
 	usecase "github.com/GabrielAp542/goTaskApi/internal/usecases"
+	"github.com/Nerzal/gocloak/v13"
 
 	"github.com/gin-gonic/gin"
 )
@@ -154,4 +159,61 @@ func (h *TaskHandler) DeleteTask(c *gin.Context) {
 		return
 	}
 
+}
+
+// middleware auth
+func (h *TaskHandler) PolicyEnferocer(c *gin.Context) {
+
+	//path := c.FullPath()
+	//method := c.Request.Method
+
+	scope := mappermissions.ConfigPermissions[c.FullPath()][c.Request.Method]
+	if scope == "public" {
+		c.Next()
+		return
+	}
+	//scope := path[c.Request.Method]
+
+	kc_client := gocloak.NewClient(os.Getenv("KC_URL"))
+	ctx := context.Background()
+
+	//gets token from headers
+	accessToken := c.GetHeader("Authorization")
+	if accessToken == "" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "missing token"})
+		c.Abort()
+		return
+	}
+
+	accessToken = strings.TrimPrefix(accessToken, "Bearer ")
+	//evaluate token
+	/*result, err := kc_client.RetrospectToken(ctx, accessToken, os.Getenv("KC_CLIENT_ID"), os.Getenv("KC_CLIENT_SECRET"), os.Getenv("KC_REALM"))
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "not valid token"})
+		c.Abort()
+		return
+	}
+	if !*result.Active {
+		c.JSON(http.StatusForbidden, gin.H{"error": "not active token"})
+		c.Abort()
+		return
+	}
+	*/
+	clientID := os.Getenv("KC_CLIENT_ID")
+
+	options := gocloak.RequestingPartyTokenOptions{
+		Audience:    &clientID,
+		Permissions: &[]string{"todo_tasks#" + scope},
+	}
+	permissions, err := kc_client.GetRequestingPartyPermissionDecision(ctx, accessToken, os.Getenv("KC_REALM"), options)
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "access denied or auth server not found"})
+		c.Abort()
+		return
+	}
+	if permissions.Result == nil || !*permissions.Result {
+		c.JSON(http.StatusForbidden, gin.H{"status": "access denied"})
+		c.Abort()
+		return
+	}
 }
